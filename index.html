@@ -29,18 +29,178 @@
     @keyframes blink{50%{opacity:0}}.hero-copy>p{max-width:660px;color:var(--muted);font-size:1.08rem}.hero-actions{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap}.button.primary{background:var(--accent);color:#04100c!important;box-shadow:0 0 32px rgba(88,247,195,.2)}.button.secondary{border-color:var(--line);background:transparent;color:var(--ink)!important}.button.secondary:hover{border-color:var(--accent);color:var(--accent)!important}
     .proof{margin-top:45px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}.proof div{min-width:0;border-left:1px solid var(--line);padding-left:16px}.proof strong{display:block;font-family:Manrope;font-size:clamp(.92rem,1.6vw,1.2rem);white-space:nowrap}.proof span{display:block;color:var(--muted);font-size:clamp(.7rem,1.15vw,.84rem);line-height:1.45}
     .hero-panel{position:relative}.orbit{position:absolute;inset:-42px;border:1px solid rgba(88,247,195,.15);border-radius:50%;animation:spin 28s linear infinite}.orbit:after{content:"";position:absolute;top:17%;right:2%;width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 18px var(--accent)}@keyframes spin{to{transform:rotate(360deg)}}
-    .profile-card{position:relative;background:linear-gradient(145deg,rgba(18,40,44,.95),rgba(8,22,26,.98));border:1px solid rgba(88,247,195,.22);border-radius:32px;padding:30px;box-shadow:0 32px 90px rgba(0,0,0,.35),0 0 50px rgba(32,201,245,.06)}
     .status{display:inline-flex;align-items:center;gap:8px;padding:7px 11px;border-radius:999px;background:rgba(88,247,195,.08);color:#aefbdd;font-size:.78rem;font-weight:700}.status i{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent)}
-    .profile-card h3{font-size:1.8rem;margin:28px 0 10px;letter-spacing:-.04em}.profile-card>p{color:var(--muted);margin:0}.skill-stack{margin-top:27px;display:grid;gap:10px}.skill{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);padding:14px 0;color:#dce6e5}.skill small{color:var(--accent);font-weight:700}.availability{margin-top:22px;padding:16px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.025);font-size:.9rem;color:#bdcaca}.availability strong{color:white}
+    .skill-stack{margin-top:27px;display:grid;gap:10px}.skill{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);padding:14px 0;color:#dce6e5}.skill small{color:var(--accent);font-weight:700}.availability{margin-top:22px;padding:16px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.025);font-size:.9rem;color:#bdcaca}.availability strong{color:white}
+
+    /* =========================================================
+       ID-STYLE FLIP CARD (hero panel)
+       A 3D flip card: front shows the work, back shows the person.
+       Click/tap the card (or focus it and press Enter) to flip.
+       ========================================================= */
+
+    /* The card itself just sets up 3D space to flip inside of. */
+    .id-card {
+      position: relative;
+      perspective: 1800px; /* higher = gentler, more realistic flip depth */
+      cursor: pointer;
+    }
+    .id-card:focus-visible .id-card-inner {
+      outline: 2px solid var(--accent);
+      outline-offset: 6px;
+    }
+
+    /* The inner layer is what actually rotates. It has no height of its
+       own — it takes whatever height the front face needs (see below),
+       so the back face always matches the front's size automatically. */
+    .id-card-inner {
+      position: relative;
+      width: 100%;
+      transform-style: preserve-3d;
+      transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .id-card.is-flipped .id-card-inner {
+      transform: rotateY(180deg);
+    }
+
+    /* Shared styling for both the front and back faces. */
+    .id-card-face {
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(145deg, rgba(18, 40, 44, .95), rgba(8, 22, 26, .98));
+      border: 1px solid rgba(88, 247, 195, .22);
+      border-radius: 32px;
+      padding: 30px;
+      box-shadow: 0 32px 90px rgba(0, 0, 0, .35), 0 0 50px rgba(32, 201, 245, .06);
+      backface-visibility: hidden; /* hides the face when it's turned away */
+    }
+
+    /* The FRONT stays in normal document flow, so its own content height
+       becomes the card's height — nothing is forced to a fixed number. */
+    .id-card-front {
+      position: relative;
+    }
+
+    /* The BACK is layered exactly on top of the front's box (same width
+       and height), then pre-rotated so it lands right-side-up once the
+       parent flips 180deg. If the back has less content than the front,
+       it'll just have extra breathing room — that's expected and fine. */
+    .id-card-back {
+      position: absolute;
+      inset: 0;
+      transform: rotateY(180deg);
+    }
+
+    .id-card-front h3 { font-size: 1.8rem; margin: 28px 0 10px; letter-spacing: -.04em; }
+    .id-card-front > p { color: var(--muted); margin: 0; }
+
+    /* Small "tap to flip" affordance, bottom of each face. */
+    .id-flip-hint {
+      margin-top: auto;
+      padding-top: 18px;
+      align-self: flex-start;
+      font-size: .78rem;
+      font-weight: 700;
+      color: var(--accent);
+      opacity: .75;
+    }
+
+    /* --- Back face: "the person behind the work" --- */
+    .id-back-tag {
+      align-self: flex-start;
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .14em;
+      color: var(--accent);
+      opacity: .8;
+    }
+
+    /* Photo slot, sized and framed like a real ID card photo. */
+    .id-photo {
+      width: 128px;
+      height: 128px;
+      margin: 18px auto 4px;
+      border-radius: 20px;
+      border: 1px solid rgba(88, 247, 195, .3);
+      background: linear-gradient(145deg, #10252a, #081316);
+      overflow: hidden;
+      position: relative;
+    }
+    .id-photo::before {
+      content: "Add photo";
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      color: #718385;
+      font-size: .7rem;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    .id-photo img {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .id-name { text-align: center; font-size: 1.5rem; letter-spacing: -.03em; margin: 4px 0 2px; }
+    .id-role { text-align: center; color: var(--muted); font-size: .88rem; margin: 0 0 20px; }
+
+    .id-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 14px 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+    .id-meta small { display: block; color: var(--muted); font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; }
+    .id-meta strong { display: block; margin-top: 3px; color: #eef6f4; }
+
+    .id-quote {
+      margin: 18px 0 0;
+      color: #bdcaca;
+      font-size: .88rem;
+      font-style: italic;
+      line-height: 1.6;
+    }
     section{padding:110px 0;scroll-margin-top:76px}.section-head{display:flex;justify-content:space-between;align-items:end;gap:30px;margin-bottom:42px}.section-head h2{font-size:clamp(2.2rem,5vw,4.2rem);letter-spacing:-.055em}.section-head p{max-width:500px;color:var(--muted);margin:0}
-    .projects-heading{align-items:center}.carousel-controls{display:flex;gap:10px;flex:0 0 auto}.carousel-button{width:48px;height:48px;display:grid;place-items:center;border:1px solid rgba(88,247,195,.38);border-radius:50%;background:rgba(88,247,195,.05);color:var(--accent);font-size:1.4rem;cursor:pointer;transition:.25s}.carousel-button:hover:not(:disabled),.carousel-button:focus-visible:not(:disabled){background:var(--accent);color:#04100c;box-shadow:0 0 26px rgba(88,247,195,.26);transform:translateY(-2px)}.carousel-button:disabled{opacity:.28;cursor:not-allowed}.projects-shell{position:relative}.projects-grid{display:flex;align-items:stretch;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;scrollbar-width:none;padding:5px 2px 28px}.projects-grid::-webkit-scrollbar{display:none}.project{flex:0 0 calc((100% - 36px)/3);min-width:0;scroll-snap-align:start;border:1px solid var(--line);border-radius:24px;overflow:hidden;background:linear-gradient(160deg,var(--card),#09171a);display:grid;grid-template-rows:auto 1fr;transition:.3s}.project:before{content:none}.project:hover{transform:translateY(-6px);border-color:rgba(88,247,195,.36);box-shadow:0 24px 60px rgba(0,0,0,.25)}.project-visual{position:relative;width:100%;aspect-ratio:16/10;border-bottom:1px solid var(--line);background:linear-gradient(145deg,#10252a,#081316);overflow:hidden}.project-visual:before{content:"Add project image";position:absolute;inset:0;display:grid;place-items:center;color:#718385;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;background:radial-gradient(circle at 75% 20%,var(--tint),transparent 46%)}.project-visual:after{content:none}.project-visual img{position:relative;z-index:1;width:100%;height:100%;display:block;object-fit:cover;object-position:top center;transition:transform .45s ease}.project:hover .project-visual img{transform:scale(1.025)}.project-content{position:relative;display:flex;flex-direction:column;padding:24px;min-height:250px}.tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.tag{font-size:.75rem;color:#abc0bf;border:1px solid var(--line);border-radius:999px;padding:4px 9px}.project h3{font-size:1.45rem;letter-spacing:-.035em;padding:0}.project-description{color:var(--muted);margin:10px 0 22px;font-size:.94rem;line-height:1.65}.project-link-label{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:15px;border-top:1px solid var(--line);color:var(--accent);font-size:.86rem;font-weight:700}.project[data-project-url]:not([data-project-url=""]){cursor:pointer}.project[data-project-url=""] .project-link-label{color:#748587}.carousel-status{color:var(--muted);font-size:.83rem;text-align:center;margin-top:-12px}.carousel-status strong{color:var(--accent)}
+    .carousel-button{width:48px;height:48px;display:grid;place-items:center;border:1px solid rgba(88,247,195,.38);border-radius:50%;background:rgba(11,20,24,.72);color:var(--accent);font-size:1.4rem;cursor:pointer;transition:.25s}.carousel-button:hover:not(:disabled),.carousel-button:focus-visible:not(:disabled){background:var(--accent);color:#04100c;box-shadow:0 0 26px rgba(88,247,195,.26);transform:translateY(-50%) scale(1.06)}.carousel-button:disabled{opacity:.28;cursor:not-allowed}
+    .coverflow-wrap{position:relative;display:flex;align-items:center;justify-content:center;margin-top:8px}
+    .coverflow-viewport{position:relative;width:100%;max-width:920px;height:520px;margin:0 auto;overflow:hidden;touch-action:pan-y}
+    .coverflow-viewport:focus-visible{outline:2px solid var(--accent);outline-offset:6px;border-radius:24px}
+    .coverflow-track{position:relative;width:100%;height:100%}
+    .project{position:absolute;top:50%;left:50%;height:92%;border:1px solid var(--line);border-radius:24px;overflow:hidden;background:linear-gradient(160deg,var(--card),#09171a);display:grid;grid-template-rows:auto minmax(0,1fr);cursor:pointer;will-change:transform,opacity,filter;transition:transform .55s cubic-bezier(.22,.9,.32,1),opacity .45s ease,filter .45s ease,border-color .3s}
+    .project.is-center{border-color:rgba(88,247,195,.4);box-shadow:0 30px 70px rgba(0,0,0,.4),0 0 40px rgba(88,247,195,.12)}
+    .project-visual{position:relative;width:100%;aspect-ratio:16/10;border-bottom:1px solid var(--line);background:linear-gradient(145deg,#10252a,#081316);overflow:hidden}.project-visual:before{content:"Add project image";position:absolute;inset:0;display:grid;place-items:center;color:#718385;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;background:radial-gradient(circle at 75% 20%,var(--tint),transparent 46%)}.project-visual:after{content:none}.project-visual img{position:relative;z-index:1;width:100%;height:100%;display:block;object-fit:cover;object-position:top center}.project-content{position:relative;display:flex;flex-direction:column;padding:20px 24px;min-height:0;overflow:hidden}.tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;flex:none}.tag{font-size:.75rem;color:#abc0bf;border:1px solid var(--line);border-radius:999px;padding:4px 9px}.project h3{font-size:1.3rem;letter-spacing:-.035em;padding:0;flex:none;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.project-description{color:var(--muted);margin:8px 0 16px;font-size:.9rem;line-height:1.6;flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding-right:6px;scrollbar-width:thin;scrollbar-color:rgba(88,247,195,.45) transparent;-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 14px),transparent 100%);mask-image:linear-gradient(to bottom,#000 calc(100% - 14px),transparent 100%)}.project-description::-webkit-scrollbar{width:5px}.project-description::-webkit-scrollbar-thumb{background:rgba(88,247,195,.45);border-radius:10px}.project-description::-webkit-scrollbar-track{background:transparent}.project-description.at-bottom{-webkit-mask-image:none;mask-image:none}.project-link-label{display:flex;align-items:center;justify-content:space-between;flex:none;padding-top:14px;border-top:1px solid var(--line);color:var(--accent);font-size:.86rem;font-weight:700}.project[data-project-url=""] .project-link-label{color:#748587}
+    .coverflow-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:60}.coverflow-arrow.coverflow-prev{left:-6px}.coverflow-arrow.coverflow-next{right:-6px}
+    .coverflow-dots{display:flex;justify-content:center;gap:8px;margin-top:22px}.coverflow-dot{width:8px;height:8px;border-radius:50%;border:0;padding:0;background:rgba(255,255,255,.25);cursor:pointer;transition:.25s}.coverflow-dot:hover{background:rgba(255,255,255,.5)}.coverflow-dot.active{background:var(--accent);width:24px;border-radius:6px;box-shadow:0 0 10px var(--accent)}
     .services{border-block:1px solid var(--line);background:radial-gradient(circle at 12% 30%,rgba(88,247,195,.06),transparent 28%),rgba(255,255,255,.015)}.service-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.service{min-height:285px;padding:28px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(145deg,rgba(16,35,39,.9),rgba(9,23,26,.8));display:flex;flex-direction:column;transition:.3s;position:relative;overflow:hidden}.service:after{content:"";position:absolute;inset:auto -30px -45px auto;width:120px;height:120px;border-radius:50%;background:var(--accent);filter:blur(70px);opacity:.08}.service:hover{transform:translateY(-4px);border-color:rgba(88,247,195,.3);box-shadow:0 20px 50px rgba(0,0,0,.22)}.service-top{display:flex;align-items:center;justify-content:space-between}.service-index{color:#647779;font-family:Manrope;font-size:.76rem;font-weight:700}.service-icon{width:54px;height:54px;display:grid;place-items:center;border-radius:15px;color:var(--accent);background:rgba(88,247,195,.08);border:1px solid rgba(88,247,195,.2);box-shadow:0 0 20px rgba(88,247,195,.06)}.service-icon svg{width:28px;height:28px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.service h3{font-size:1.24rem;margin:24px 0 10px}.service p{color:var(--muted);margin:0;font-size:.93rem}.service-tools{display:flex;gap:7px;flex-wrap:wrap;margin-top:auto;padding-top:22px}.service-tools span{padding:5px 8px;border-radius:8px;background:rgba(255,255,255,.035);color:#9db0af;font-size:.7rem}
+    .certificates{border-block:1px solid var(--line);background:radial-gradient(circle at 88% 15%,rgba(32,201,245,.06),transparent 30%),rgba(255,255,255,.012)}
+    .cert-carousel{display:flex;align-items:center;gap:14px;margin-top:8px}
+    .cert-track{flex:1;min-width:0;display:flex;gap:22px;overflow-x:auto;scroll-snap-type:x proximity;scroll-behavior:smooth;scrollbar-width:none;padding:6px 2px 14px}
+    .cert-track::-webkit-scrollbar{display:none}
+    .cert-track:focus-visible{outline:2px solid var(--accent);outline-offset:6px;border-radius:22px}
+    .cert-card{flex:0 0 280px;scroll-snap-align:start;border:1px solid var(--line);border-radius:22px;overflow:hidden;background:linear-gradient(160deg,var(--card),#09171a);display:flex;flex-direction:column;transition:.3s}.cert-card:hover{transform:translateY(-4px);border-color:rgba(88,247,195,.3);box-shadow:0 20px 50px rgba(0,0,0,.22)}
+    .cert-visual{position:relative;width:100%;aspect-ratio:4/3;border-bottom:1px solid var(--line);background:linear-gradient(145deg,#10252a,#081316);overflow:hidden;cursor:zoom-in}.cert-visual:before{content:"Add certificate image";position:absolute;inset:0;display:grid;place-items:center;color:#718385;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;text-align:center;padding:0 24px}.cert-visual img{position:relative;z-index:1;width:100%;height:100%;display:block;object-fit:cover;object-position:top center}
+    .cert-body{padding:20px;display:flex;flex-direction:column;gap:6px;cursor:default}.cert-issuer{font-size:.74rem;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);font-weight:700}.cert-title{font-family:Manrope,sans-serif;font-size:1.05rem;letter-spacing:-.03em;color:var(--ink);margin:2px 0 0;line-height:1.3}.cert-meta{font-size:.82rem;color:var(--muted)}
+    .cert-link{margin-top:10px;display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:1px solid var(--line);color:var(--accent);font-size:.82rem;font-weight:700}.cert-link[data-clickable]{cursor:pointer}.cert-link:not([data-clickable]){color:#748587}
+
+    /* Fullscreen preview shown when a certificate image is clicked. Stays in the
+       DOM at all times and just fades/scales in and out, so the transition is smooth. */
+    .lightbox{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;background:rgba(4,10,12,.92);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .3s ease,visibility .3s}
+    .lightbox.open{opacity:1;visibility:visible;pointer-events:auto}
+    .lightbox-image{max-width:min(90vw,720px);max-height:85vh;border-radius:16px;border:1px solid rgba(88,247,195,.3);box-shadow:0 40px 100px rgba(0,0,0,.5);object-fit:contain;transform:scale(.94);transition:transform .3s ease}
+    .lightbox.open .lightbox-image{transform:scale(1)}
+    .lightbox-close{position:fixed;top:24px;right:28px;width:44px;height:44px;border-radius:50%;border:1px solid rgba(88,247,195,.4);background:rgba(11,20,24,.8);color:var(--ink);font-size:1.1rem;cursor:pointer;transition:.2s}
+    .lightbox-close:hover{background:var(--accent);color:#04100c}
     .contact-card{border:1px solid rgba(88,247,195,.24);border-radius:30px;padding:clamp(30px,6vw,68px);background:radial-gradient(circle at 85% 10%,rgba(32,201,245,.12),transparent 33%),linear-gradient(135deg,#0e2427,#091619)}.contact-intro{text-align:center}.contact-card h2{font-size:clamp(2.5rem,6vw,5.2rem);letter-spacing:-.065em;max-width:850px;margin:0 auto 20px}.contact-card h2 span{color:var(--accent);text-shadow:0 0 30px rgba(88,247,195,.22)}.contact-intro>p{max-width:650px;color:var(--muted);margin:0 auto 42px}.contact-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:18px}.contact-details,.contact-form{border:1px solid var(--line);border-radius:20px;padding:24px;background:rgba(4,14,17,.48)}.contact-details{display:flex;flex-direction:column;gap:12px}.contact-detail{padding:14px;border-radius:14px;background:rgba(255,255,255,.03)}.contact-detail small{display:block;color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.08em}.contact-detail strong{display:block;margin-top:3px;color:#eef6f4;word-break:break-word}.contact-links{display:flex;gap:10px;flex-wrap:wrap;margin-top:auto}.contact-links .button{flex:1;white-space:nowrap}.contact-form{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field{display:grid;gap:6px}.field.full{grid-column:1/-1}.field label{font-weight:600;font-size:.83rem;color:#c9d5d3}.field input,.field textarea{width:100%;border:1px solid var(--line);border-radius:12px;padding:13px 14px;background:#081518;color:white;font:inherit;outline:none;transition:.2s}.field textarea{min-height:150px;resize:vertical}.field input:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(88,247,195,.08)}.form-note,.form-status{grid-column:1/-1;font-size:.78rem;margin:0}.form-note{color:var(--muted)}.form-status{min-height:1.3em;color:var(--accent)}.form-status.error{color:#ff9b9b}.contact-form .button{border:0;cursor:pointer;grid-column:1/-1}.contact-form .button:disabled{opacity:.55;cursor:wait}.toast{position:fixed;right:20px;bottom:20px;padding:12px 16px;border-radius:12px;background:#10272a;border:1px solid rgba(88,247,195,.35);color:#dffff4;box-shadow:0 18px 50px rgba(0,0,0,.35);opacity:0;transform:translateY(12px);pointer-events:none;transition:.25s;z-index:50}.toast.show{opacity:1;transform:none}.footer{padding:30px 0;border-top:1px solid var(--line);color:#859696;font-size:.88rem}.footer-inner{display:flex;justify-content:space-between;gap:20px}
     .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}.reveal.visible{opacity:1;transform:none}
-    @media(max-width:1050px){.project{flex-basis:calc((100% - 18px)/2)}.service-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
-    @media(max-width:850px){.nav-links{display:none;position:absolute;top:76px;left:0;right:0;padding:18px 20px;background:#091418;border-bottom:1px solid var(--line);flex-direction:column;align-items:stretch}.nav-links.open{display:flex}.nav-links a{text-align:center}.menu{display:block}.nav-cta{display:none}.hero{grid-template-columns:1fr;padding-top:64px;gap:80px}.hero-panel{max-width:540px;margin:auto}.service-list,.contact-grid{grid-template-columns:1fr}.section-head{display:block}.section-head p{margin-top:18px}.projects-heading{display:flex;align-items:end}.projects-heading>div:first-child{flex:1}.carousel-controls{margin-left:auto}}
-    @media(max-width:620px){.project{flex-basis:100%}.projects-heading{display:grid;grid-template-columns:1fr auto;align-items:end}.projects-heading>p{grid-column:1/-1}.carousel-button{width:44px;height:44px}}
-    @media(max-width:520px){.wrap{width:min(100% - 28px,var(--max))}.nav-inner{height:68px}.nav-links{top:68px}h1{font-size:3.25rem}.hero{min-height:auto;padding:62px 0}.hero-actions{display:grid}.hero-actions .button{width:100%}.proof{gap:10px}.proof div{padding-left:10px}.proof strong{font-size:.8rem}.proof span{font-size:.66rem}.profile-card{padding:22px;border-radius:24px}.orbit{display:none}section{padding:78px 0}.section-head{margin-bottom:28px}.project-content{padding:20px;min-height:270px}.service{padding:22px;min-height:270px}.service-icon{width:46px;height:46px}.contact-card{padding:26px 16px}.contact-form{grid-template-columns:1fr}.field{grid-column:1/-1}.contact-links{display:grid}.footer-inner{display:block}.footer-inner span{display:block;margin-top:6px}}
+    @media(max-width:1050px){.service-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:850px){.nav-links{display:none;position:absolute;top:76px;left:0;right:0;padding:18px 20px;background:#091418;border-bottom:1px solid var(--line);flex-direction:column;align-items:stretch}.nav-links.open{display:flex}.nav-links a{text-align:center}.menu{display:block}.nav-cta{display:none}.hero{grid-template-columns:1fr;padding-top:64px;gap:80px}.hero-panel{max-width:540px;margin:auto}.service-list,.contact-grid{grid-template-columns:1fr}.section-head{display:block}.section-head p{margin-top:18px}.coverflow-viewport{height:480px}.coverflow-arrow{width:44px;height:44px;font-size:1.25rem}.coverflow-arrow.coverflow-prev{left:-2px}.coverflow-arrow.coverflow-next{right:-2px}}
+    @media(max-width:620px){.coverflow-viewport{height:440px;max-width:100%}.coverflow-arrow{width:38px;height:38px;font-size:1.1rem}.coverflow-arrow.coverflow-prev{left:2px}.coverflow-arrow.coverflow-next{right:2px}.project-content{padding:16px 18px}.project h3{font-size:1.15rem}.project-description{font-size:.85rem}}
+    @media(max-width:520px){.wrap{width:min(100% - 28px,var(--max))}.nav-inner{height:68px}.nav-links{top:68px}h1{font-size:3.25rem}.hero{min-height:auto;padding:62px 0}.hero-actions{display:grid}.hero-actions .button{width:100%}.proof{gap:10px}.proof div{padding-left:10px}.proof strong{font-size:.8rem}.proof span{font-size:.66rem}.id-card-face{padding:22px;border-radius:24px}.orbit{display:none}section{padding:78px 0}.section-head{margin-bottom:28px}.service{padding:22px;min-height:270px}.service-icon{width:46px;height:46px}.contact-card{padding:26px 16px}.contact-form{grid-template-columns:1fr}.field{grid-column:1/-1}.contact-links{display:grid}.cert-card{flex-basis:82%}.cert-carousel{gap:8px}.footer-inner{display:block}.footer-inner span{display:block;margin-top:6px}}
     @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.orbit,.caret{animation:none}.reveal{opacity:1;transform:none;transition:none}}
   </style>
 </head>
@@ -50,7 +210,7 @@
       <a class="brand" href="#home" aria-label="Ronel Montero home">RONEL<span>.</span></a>
       <button class="menu" aria-label="Open navigation" aria-expanded="false">☰</button>
       <nav class="nav-links" aria-label="Main navigation">
-        <a href="#home">Home</a><a href="#projects">Projects</a><a href="#services">What I do</a><a href="#contact">Contact</a>
+        <a href="#home">Home</a><a href="#projects">Projects</a><a href="#services">What I do</a><a href="#certificates">Certificates</a><a href="#contact">Contact</a>
       </nav>
       <a class="nav-cta" href="#contact">Let’s work together ↗</a>
     </div>
@@ -66,31 +226,64 @@
       </div>
       <div class="hero-panel" aria-label="Expertise summary">
         <div class="orbit" aria-hidden="true"></div>
-        <article class="profile-card">
-          <span class="status"><i></i> Open to remote opportunities</span>
-          <h3>Built to support the work behind a reliable store.</h3>
-          <p>I combine careful catalog execution, storefront thinking, and practical automation—so your team can move faster without losing quality.</p>
-          <div class="skill-stack"><div class="skill"><span>Product listings & catalog</span><small>01</small></div><div class="skill"><span>Storefront & Liquid</span><small>02</small></div><div class="skill"><span>Inventory & fulfillment</span><small>03</small></div><div class="skill"><span>AI-assisted workflows</span><small>04</small></div></div>
-          <div class="availability"><strong>Best fit:</strong> Shopify teams that need someone who can execute details and improve the system around them.</div>
-        </article>
+
+        <!-- ID-style flip card: click/tap or press Enter to flip -->
+        <div class="id-card" id="idCard" tabindex="0" role="button" aria-pressed="false" aria-label="Ronel's profile card. Press to flip and see the person behind the work.">
+          <div class="id-card-inner">
+
+            <!-- FRONT FACE: the work -->
+            <article class="id-card-face id-card-front">
+              <span class="status"><i></i> Open to remote opportunities</span>
+              <h3>Built to support the work behind a reliable store.</h3>
+              <p>I combine careful catalog execution, storefront thinking, and practical automation—so your team can move faster without losing quality.</p>
+              <div class="skill-stack">
+                <div class="skill"><span>Product listings & catalog</span><small>01</small></div>
+                <div class="skill"><span>Storefront & Liquid</span><small>02</small></div>
+                <div class="skill"><span>Inventory & fulfillment</span><small>03</small></div>
+                <div class="skill"><span>AI-assisted workflows</span><small>04</small></div>
+              </div>
+              <div class="availability"><strong>Best fit:</strong> Shopify teams that need someone who can execute details and improve the system around them.</div>
+              <span class="id-flip-hint">Tap to flip ↻</span>
+            </article>
+
+            <!-- BACK FACE: the person -->
+            <article class="id-card-face id-card-back">
+              <span class="id-back-tag">ID CARD</span>
+              <div class="id-photo">
+                <img src="assets/ronel-photo.jpeg" alt="Ronel Montero" loading="lazy" onerror="this.hidden=true">
+              </div>
+              <h3 class="id-name">Ronel Montero</h3>
+              <p class="id-role">Shopify & E-commerce Specialist</p>
+              <div class="id-meta">
+                <div><small>Based in</small><strong>Philippines</strong></div>
+                <div><small>Status</small><strong>Remote-ready</strong></div>
+              </div>
+              <p class="id-quote">"I care about the details that make a store easy to shop and easy to run."</p>
+              <span class="id-flip-hint">Tap to flip back ↻</span>
+            </article>
+
+          </div>
+        </div>
       </div>
     </section>
 
     <section class="wrap reveal" id="projects">
-      <div class="section-head projects-heading"><div><div class="eyebrow">Selected work</div><h2>Proof through projects.</h2></div><p>I build product experiences that are clearer to shop, easier to manage, and designed to move customers confidently toward purchase.</p><div class="carousel-controls" aria-label="Project carousel controls"><button class="carousel-button" id="projectPrev" type="button" aria-label="Previous projects">‹</button><button class="carousel-button" id="projectNext" type="button" aria-label="Next projects">›</button></div></div>
+      <div class="section-head"><div><div class="eyebrow">Selected work</div><h2>Proof through projects.</h2></div><p>I build product experiences that are clearer to shop, easier to manage, and designed to move customers confidently toward purchase.</p></div>
 
-      <div class="projects-shell"><div class="projects-grid" id="projectTrack" tabindex="0" aria-label="Portfolio projects">
+      <div class="coverflow-wrap">
+        <button class="carousel-button coverflow-arrow coverflow-prev" id="projectPrev" type="button" aria-label="Previous project">‹</button>
+        <div class="coverflow-viewport" id="projectViewport" tabindex="0" aria-label="Portfolio projects, use arrow keys to browse">
+          <div class="coverflow-track" id="projectTrack">
 
         <article
             class="project"
             data-project-url="https://next-tech-hub-2.myshopify.com"
-            tabindex="0"
             style="--tint:rgba(88,247,195,.18)"
             >
             <div class="project-visual">
               <img
               src="assets/projects/NTH.png"
-              alt="Gaming accessories Shopify storefront project"
+              alt="Next Tech Hub"
               loading="lazy"
               onerror="this.hidden=true"
               >
@@ -118,13 +311,12 @@
           <article
             class="project"
             data-project-url="https://aurevia-pvm14ixq.myshopify.com"
-            tabindex="0"
             style="--tint:rgba(88,247,195,.18)"
             >
             <div class="project-visual">
               <img
               src="assets/projects/Aurevia.png"
-              alt="Gaming accessories Shopify storefront project"
+              alt="Aurevia"
               loading="lazy"
               onerror="this.hidden=true"
               >
@@ -149,7 +341,77 @@
             </div>
           </article>
 
-      </div><p class="carousel-status" id="carouselStatus" aria-live="polite"><strong>1</strong> of 4 projects</p></div>
+          <article
+            class="project"
+            data-project-url="Santal Obscur LLanding Page.html"
+            style="--tint:rgba(88,247,195,.18)"
+            >
+            <div class="project-visual">
+              <img
+              src="assets/projects/aurevia-landing-page.png"
+              alt="Aurevia Landing Page"
+              loading="lazy"
+              onerror="this.hidden=true"
+              >
+            </div>
+
+            <div class="project-content">
+              <div class="tags">
+                <span class="tag">SEO</span>
+                <span class="tag">HTML</span>
+                <span class="tag">CSS</span>
+              </div>
+
+              <h3>Aurevia Landing Page</h3>
+
+              <p class="project-description">
+                A custom Shopify landing page featuring conversion-focused design, responsive sections, clear content hierarchy, strong calls to action, product-focused storytelling, and a streamlined customer journey.
+              </p>
+
+              <span class="project-link-label">
+                View live storefront <span>↗</span>
+              </span>
+            </div>
+          </article>
+
+          <article
+            class="project"
+            data-project-url="ai-testimonial-ads.html"
+            style="--tint:rgba(88,247,195,.18)"
+            >
+            <div class="project-visual">
+              <img
+              src="assets/projects/ugc.png"
+              alt="AI Talking-Head Testimonial Ads"
+              loading="lazy"
+              onerror="this.hidden=true"
+              >
+            </div>
+
+            <div class="project-content">
+              <div class="tags">
+                <span class="tag">AI Video</span>
+                <span class="tag">UGC Ad</span>
+                <span class="tag">E-commerce</span>
+              </div>
+
+              <h3>AI Talking-Head Testimonial Ads</h3>
+
+              <p class="project-description">
+                A collection of AI-assisted testimonial ads combining scripted hooks, realistic talking-head delivery, product-focused storytelling and short-form editing for social media campaigns.
+              </p>
+
+              <span class="project-link-label">
+                View live storefront <span>↗</span>
+              </span>
+            </div>
+          </article>
+
+      </div>
+          </div>
+        <button class="carousel-button coverflow-arrow coverflow-next" id="projectNext" type="button" aria-label="Next project">›</button>
+      </div>
+      <div class="coverflow-dots" id="projectDots" aria-label="Select project"></div>
     </section>
 
     <section class="services reveal" id="services"><div class="wrap"><div class="section-head"><div><div class="eyebrow">What I do</div><h2>Useful from day one.</h2></div><p>Practical Shopify support across the customer-facing store and the operational systems behind it.</p></div><div class="service-list">
@@ -161,7 +423,98 @@
       <article class="service"><div class="service-top"><span class="service-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/><path d="m5.6 5.6 2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8"/><circle cx="12" cy="12" r="4"/></svg></span><span class="service-index">06</span></div><h3>AI content & workflow automation</h3><p>AI-supported content and automations that reduce repetitive work while keeping accuracy and human review in the process.</p><div class="service-tools"><span>Prompting</span><span>Content</span><span>Automation</span><span>Review systems</span></div></article>
     </div></div></section>
 
-    <section class="wrap reveal" id="contact"><div class="contact-card"><div class="contact-intro"><div class="eyebrow" style="justify-content:center">Ready when you are</div><h2>Need someone who can <span>own the details?</span></h2><p>Tell me what your store needs. Your message will be sent directly from this page to my inbox.</p></div><div class="contact-grid"><aside class="contact-details" aria-label="Contact details"><div class="contact-detail"><small>Email</small><strong id="emailText">rmontero0753@gmail.com</strong></div><div class="contact-detail"><small>Based in</small><strong>Philippines · Remote worldwide</strong></div><div class="contact-detail"><small>Best-fit work</small><strong>Shopify listings, storefronts, operations & AI workflows</strong></div><div class="contact-links"><button class="button secondary" id="copyEmail" type="button">Copy email</button><a class="button secondary" href="assets/ronel-montero-cv.pdf" download="Ronel-Montero-CV.pdf">Download CV</a><a class="button secondary" href="https://www.linkedin.com/in/ronel-montero/" target="_blank" rel="noopener">LinkedIn ↗</a></div></aside><form class="contact-form" id="contactForm" action="https://formspree.io/f/xppwpzea" method="POST"><input type="hidden" name="_subject" value="New portfolio inquiry"><input type="text" name="_gotcha" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true"><div class="field"><label for="contactName">Your name</label><input id="contactName" name="name" autocomplete="name" required></div><div class="field"><label for="contactEmail">Your email</label><input id="contactEmail" name="email" type="email" autocomplete="email" required></div><div class="field full"><label for="contactSubject">What do you need help with?</label><input id="contactSubject" name="subject" placeholder="Product listings, storefront, operations…" required></div><div class="field full"><label for="contactMessage">Project details</label><textarea id="contactMessage" name="message" placeholder="Share the goal, current challenge, and timeline." required></textarea></div><p class="form-note">Your details are used only to respond to this inquiry.</p><p class="form-status" id="formStatus" role="status" aria-live="polite"></p><button class="button primary" id="submitMessage" type="submit">Send message ↗</button></form></div></div></section>
+    <section class="certificates reveal" id="certificates"><div class="wrap"><div class="section-head"><div><div class="eyebrow">Credentials</div><h2>Certified & continuously learning.</h2></div><p>Formal training and completed coursework that back up the practical Shopify and e-commerce work above.</p></div>
+
+      <div class="cert-carousel">
+        <button class="carousel-button cert-prev" id="certPrev" type="button" aria-label="Previous certificate">‹</button>
+        <div class="cert-track" id="certTrack" tabindex="0" aria-label="Certificates, scroll or use arrows to browse">
+
+      <article class="cert-card" data-cert-url="https://www.udemy.com/certificate/UC-3a06c260-2de6-4e62-82ce-dbe0cb3fd01d/">
+        <div class="cert-visual"><img src="assets/certificates/cert-1.jpg" alt="Certificate of completion" loading="lazy" onerror="this.hidden=true"></div>
+        <div class="cert-body">
+          <span class="cert-issuer">Udemy</span>
+          <h3 class="cert-title">Shopify Marketing 101 — Boost Ecommerce Traffic w/ SEO & Ads</h3>
+          <span class="cert-meta">Completed — September 2026</span>
+          <span class="cert-link">Certificate on file</span>
+        </div>
+      </article>
+<!--
+      <article class="cert-card" data-cert-url="">
+        <div class="cert-visual"><img src="assets/certificates/cert-1.png" alt="Certificate of completion" loading="lazy" onerror="this.hidden=true"></div>
+        <div class="cert-body">
+          <span class="cert-issuer">Issuing platform</span>
+          <h3 class="cert-title">Certificate name goes here</h3>
+          <span class="cert-meta">Completed — Month Year</span>
+          <span class="cert-link">Certificate on file</span>
+        </div>
+      </article>
+-->
+        </div>
+        <button class="carousel-button cert-next" id="certNext" type="button" aria-label="Next certificate">›</button>
+      </div>
+
+    </div></section>
+
+    <section class="wrap reveal" id="contact">
+      <div class="contact-card">
+        <div class="contact-intro">
+          <div class="eyebrow" style="justify-content:center">Ready when you are</div>
+          <h2>Need someone who can <span>own the details?</span></h2>
+          <p>Tell me exactly what your store needs. Straight to me — no filters, no queue, no one else reading it first.</p>
+        </div>
+
+        <div class="contact-grid">
+          <aside class="contact-details" aria-label="Contact details">
+            <div class="contact-detail"><small>Email</small>
+              <strong id="emailText">rmontero0753@gmail.com</strong>
+            </div>
+
+            <div class="contact-detail">
+              <small>Based in</small>
+              <strong>Philippines · Remote worldwide</strong>
+            </div>
+
+            <div class="contact-detail">
+              <small>Best-fit work</small>
+              <strong>Shopify listings, storefronts, operations & AI workflows</strong>
+            </div>
+
+            <div class="contact-links">
+              <button class="button secondary" id="copyEmail" type="button">Copy email</button>
+              <a class="button secondary" href="assets/ronel-montero-cv.pdf" download="Ronel-Montero-CV.pdf">Download CV</a>
+              <a class="button secondary" href="https://www.linkedin.com/in/ronel-montero/" target="_blank" rel="noopener">LinkedIn ↗</a>
+            </div>
+          </aside>
+
+          <form class="contact-form" id="contactForm" action="https://formspree.io/f/xppwpzea" method="POST">
+            <input type="hidden" name="_subject" value="New portfolio inquiry">
+            <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+            <div class="field">
+              <label for="contactName">Your name</label>
+              <input id="contactName" name="name" autocomplete="name" required>
+            </div>
+
+            <div class="field">
+              <label for="contactEmail">Your email</label>
+              <input id="contactEmail" name="email" type="email" autocomplete="email" required>
+            </div>
+
+            <div class="field full">
+              <label for="contactSubject">What do you need help with?</label>
+              <input id="contactSubject" name="subject" placeholder="Product listings, storefront, operations…" required>
+            </div>
+
+            <div class="field full">
+              <label for="contactMessage">Project details</label>
+              <textarea id="contactMessage" name="message" placeholder="Share the goal, current challenge, and timeline." required></textarea>
+            </div>
+
+            <p class="form-note">Your details are used only to respond to this inquiry.</p><p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
+            <button class="button primary" id="submitMessage" type="submit">Send message ↗</button>
+          </form>
+        </div>
+      </div>
+    </section>
   </main>
 
 
@@ -175,6 +528,12 @@
     </div>
   </footer>
 
+  <!-- Certificate lightbox: opens a larger view of the clicked certificate image -->
+  <div class="lightbox" id="certLightbox" role="dialog" aria-modal="true" aria-label="Certificate preview">
+    <button class="lightbox-close" id="lightboxClose" type="button" aria-label="Close preview">✕</button>
+    <img class="lightbox-image" id="lightboxImage" src="" alt="">
+  </div>
+
 
 
 
@@ -186,35 +545,178 @@
     const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('visible');observer.unobserve(entry.target)}}),{threshold:.12});document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
     const menu=document.querySelector('.menu'),links=document.querySelector('.nav-links');menu.addEventListener('click',()=>{const open=links.classList.toggle('open');menu.setAttribute('aria-expanded',open)});links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{links.classList.remove('open');menu.setAttribute('aria-expanded','false')}));
     const sections=[...document.querySelectorAll('main section[id]')],navItems=[...document.querySelectorAll('.nav-links a[href^="#"]')];const sectionObserver=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){navItems.forEach(item=>item.classList.toggle('active',item.getAttribute('href')==='#'+entry.target.id))}})},{rootMargin:'-35% 0px -55%',threshold:0});sections.forEach(section=>sectionObserver.observe(section));navItems[0].classList.add('active');
-    const projectTrack=document.getElementById('projectTrack'),projectCards=[...projectTrack.querySelectorAll('.project')],projectPrev=document.getElementById('projectPrev'),projectNext=document.getElementById('projectNext'),carouselStatus=document.getElementById('carouselStatus');
-    const projectStep=()=>projectCards[0]?.getBoundingClientRect().width+18||0;const updateCarousel=()=>{const step=projectStep(),index=step?Math.round(projectTrack.scrollLeft/step):0,visible=Math.max(1,Math.round(projectTrack.clientWidth/step));projectPrev.disabled=index<=0;projectNext.disabled=index+visible>=projectCards.length;carouselStatus.innerHTML=`<strong>${Math.min(index+1,projectCards.length)}</strong> of ${projectCards.length} projects`};
-    projectPrev.addEventListener('click',()=>projectTrack.scrollBy({left:-projectStep(),behavior:'smooth'}));projectNext.addEventListener('click',()=>projectTrack.scrollBy({left:projectStep(),behavior:'smooth'}));projectTrack.addEventListener('scroll',()=>requestAnimationFrame(updateCarousel),{passive:true});projectTrack.addEventListener('keydown',event=>{if(event.key==='ArrowRight'){event.preventDefault();projectNext.click()}if(event.key==='ArrowLeft'){event.preventDefault();projectPrev.click()}});new ResizeObserver(updateCarousel).observe(projectTrack);updateCarousel();
-    document.querySelectorAll('.project[data-project-url]').forEach(card=>{const url=card.dataset.projectUrl,label=card.querySelector('.project-link-label');if(url)label.innerHTML='View project <span>↗</span>';const openProject=()=>{if(url)window.open(url,'_blank','noopener')};card.addEventListener('click',openProject);card.addEventListener('keydown',event=>{if((event.key==='Enter'||event.key===' ')&&url){event.preventDefault();openProject()}})});
-    const email='rmontero0753@gmail.com',toast=document.getElementById('toast');document.getElementById('copyEmail').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(email);toast.textContent='Email copied'}catch{toast.textContent=email}toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),2200)});
+    const coverflowViewport=document.getElementById('projectViewport'),projectTrack=document.getElementById('projectTrack'),projectCards=[...projectTrack.querySelectorAll('.project')],projectPrev=document.getElementById('projectPrev'),projectNext=document.getElementById('projectNext'),projectDotsWrap=document.getElementById('projectDots');
+    document.querySelectorAll('.project[data-project-url]').forEach(card=>{const url=card.dataset.projectUrl,label=card.querySelector('.project-link-label');if(url)label.innerHTML='View project <span>↗</span>'});
+    let currentProject=0;
+    projectCards.forEach((card,i)=>{const dot=document.createElement('button');dot.type='button';dot.className='coverflow-dot';dot.setAttribute('aria-label','Show project '+(i+1));dot.addEventListener('click',()=>goTo(i));projectDotsWrap.appendChild(dot)});
+    const projectDots=[...projectDotsWrap.children];
+    function renderCoverflow(){
+      const total=projectCards.length;if(!total)return;
+      const viewportWidth=coverflowViewport.clientWidth,isMobile=viewportWidth<620;
+      const cardWidth=Math.max(190,Math.min(300,viewportWidth*(isMobile?.62:.34)));
+      const step=cardWidth*(isMobile?.8:.86);
+      projectCards.forEach((card,i)=>{
+        let distance=i-currentProject;
+        if(distance>total/2)distance-=total;
+        if(distance<-total/2)distance+=total;
+        const abs=Math.abs(distance);
+        const scale=abs===0?1:abs===1?.8:.62;
+        const opacity=abs===0?1:abs===1?.55:.22;
+        const blur=abs===0?0:Math.min(abs*1.4,4);
+        card.style.width=cardWidth+'px';
+        card.style.transform=`translate(-50%,-50%) translateX(${distance*step}px) scale(${scale})`;
+        card.style.opacity=abs>2?0:opacity;
+        card.style.zIndex=100-abs;
+        card.style.filter=abs===0?'none':`blur(${blur}px)`;
+        card.style.pointerEvents=abs>2?'none':'auto';
+        card.style.visibility=abs>2?'hidden':'visible';
+        card.classList.toggle('is-center',abs===0);
+        card.setAttribute('aria-hidden',abs===0?'false':'true');
+      });
+      projectDots.forEach((dot,i)=>dot.classList.toggle('active',i===currentProject));
+    }
+    function goTo(i){const total=projectCards.length;currentProject=((i%total)+total)%total;renderCoverflow();if(typeof startAutoplay==='function')startAutoplay()}
+    if(projectPrev)projectPrev.addEventListener('click',()=>goTo(currentProject-1));
+    if(projectNext)projectNext.addEventListener('click',()=>goTo(currentProject+1));
+    coverflowViewport.addEventListener('keydown',event=>{if(event.key==='ArrowRight'){event.preventDefault();goTo(currentProject+1)}else if(event.key==='ArrowLeft'){event.preventDefault();goTo(currentProject-1)}else if(event.key==='Enter'){const url=projectCards[currentProject]?.dataset.projectUrl;if(url)window.open(url,'_blank','noopener')}});
+    projectCards.forEach((card,i)=>{
+      card.addEventListener('click',event=>{if(event.target.closest('.project-description'))return;if(i===currentProject){const url=card.dataset.projectUrl;if(url)window.open(url,'_blank','noopener')}else{goTo(i)}});
+      const desc=card.querySelector('.project-description');
+      if(desc){
+        const syncFade=()=>desc.classList.toggle('at-bottom',desc.scrollHeight-desc.scrollTop-desc.clientHeight<2);
+        desc.addEventListener('scroll',syncFade,{passive:true});
+        syncFade();
+      }
+    });
+    let touchStartX=null;
+    coverflowViewport.addEventListener('touchstart',e=>{stopAutoplay();if(e.target.closest('.project-description')){touchStartX=null;return}touchStartX=e.touches[0].clientX},{passive:true});
+    coverflowViewport.addEventListener('touchend',e=>{if(touchStartX!==null){const dx=e.changedTouches[0].clientX-touchStartX;if(Math.abs(dx)>40)goTo(currentProject+(dx<0?1:-1))}touchStartX=null;clearTimeout(autoplayResumeTimer);autoplayResumeTimer=setTimeout(startAutoplay,3000)},{passive:true});
+    new ResizeObserver(renderCoverflow).observe(coverflowViewport);
+    let autoplayTimer=null,autoplayResumeTimer=null;
+    const AUTOPLAY_DELAY=4500,reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function stopAutoplay(){if(autoplayTimer){clearInterval(autoplayTimer);autoplayTimer=null}}
+    function startAutoplay(){if(reducedMotion||projectCards.length<2||document.hidden)return;stopAutoplay();autoplayTimer=setInterval(()=>goTo(currentProject+1),AUTOPLAY_DELAY)}
+    coverflowViewport.addEventListener('mouseenter',stopAutoplay);
+    coverflowViewport.addEventListener('mouseleave',startAutoplay);
+    coverflowViewport.addEventListener('focusin',stopAutoplay);
+    coverflowViewport.addEventListener('focusout',startAutoplay);
+    document.addEventListener('visibilitychange',()=>{document.hidden?stopAutoplay():startAutoplay()});
+    renderCoverflow();
+    startAutoplay();
+    function fallbackCopy(text){const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.left='-9999px';ta.style.top='0';document.body.appendChild(ta);ta.focus();ta.select();let ok=false;try{ok=document.execCommand('copy')}catch(e){ok=false}document.body.removeChild(ta);return ok}
+    const email='rmontero0753@gmail.com',toast=document.getElementById('toast');document.getElementById('copyEmail').addEventListener('click',async()=>{let copied=false;if(navigator.clipboard&&window.isSecureContext){try{await navigator.clipboard.writeText(email);copied=true}catch(e){copied=false}}if(!copied){copied=fallbackCopy(email)}toast.textContent=copied?'Email copied':email;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),2200)});
     const contactForm=document.getElementById('contactForm'),formStatus=document.getElementById('formStatus'),submitMessage=document.getElementById('submitMessage');contactForm.addEventListener('submit',async event=>{event.preventDefault();formStatus.classList.remove('error');formStatus.textContent='Sending your message…';submitMessage.disabled=true;submitMessage.textContent='Sending…';try{const response=await fetch(contactForm.action,{method:'POST',body:new FormData(contactForm),headers:{Accept:'application/json'}});if(!response.ok)throw new Error('Submission failed');contactForm.reset();formStatus.textContent='Message sent successfully. I’ll get back to you as soon as possible.';submitMessage.textContent='Message sent ✓'}catch(error){formStatus.classList.add('error');formStatus.textContent='Your message could not be sent. Please try again or copy my email.';submitMessage.textContent='Try again'}finally{submitMessage.disabled=false}});
     document.getElementById('year').textContent=new Date().getFullYear();
 
+    /* -----------------------------------------------------------
+       ID-style flip card
+       Click/tap the card, or focus it and press Enter/Space,
+       to flip between "the work" (front) and "the person" (back).
+       ----------------------------------------------------------- */
+    (function setUpIdCardFlip() {
+      const idCard = document.getElementById('idCard');
+      if (!idCard) return;
 
-  document
-    .querySelectorAll(".project[data-project-url]")
-    .forEach((card) => {
-      const url = card.dataset.projectUrl;
-
-      if (!url) return;
-
-      function openProject() {
-        window.open(url, "_blank", "noopener,noreferrer");
+      function toggleFlip() {
+        const isFlipped = idCard.classList.toggle('is-flipped');
+        idCard.setAttribute('aria-pressed', isFlipped ? 'true' : 'false');
       }
 
-      card.addEventListener("click", openProject);
+      idCard.addEventListener('click', toggleFlip);
 
-      card.addEventListener("keydown", (event) => {
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          openProject();
-        }
+      idCard.addEventListener('keydown', (event) => {
+        const isActivationKey = event.key === 'Enter' || event.key === ' ';
+        if (!isActivationKey) return;
+        event.preventDefault(); // stop Space from scrolling the page
+        toggleFlip();
       });
-    });
+    })();
+
+    /* -----------------------------------------------------------
+       Certificates: horizontal carousel + click-to-zoom lightbox
+       ----------------------------------------------------------- */
+    (function setUpCertificates() {
+      // The "View certificate" link only opens a URL if one was actually provided.
+      document.querySelectorAll('.cert-card').forEach(card => {
+        const url = card.dataset.certUrl;
+        const link = card.querySelector('.cert-link');
+        if (!url) return; // no URL: leave it as plain, non-clickable "Certificate on file" text
+        link.innerHTML = 'View certificate <span>↗</span>';
+        link.setAttribute('data-clickable', '');
+        link.setAttribute('tabindex', '0');
+        link.setAttribute('role', 'link');
+        const openCert = () => window.open(url, '_blank', 'noopener');
+        link.addEventListener('click', openCert);
+        link.addEventListener('keydown', event => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            openCert();
+          }
+        });
+      });
+
+      // Prev/next arrows scroll the track by roughly one card's width.
+      const certTrack = document.getElementById('certTrack');
+      const certPrev = document.getElementById('certPrev');
+      const certNext = document.getElementById('certNext');
+      if (certTrack) {
+        const stepAmount = () => (certTrack.querySelector('.cert-card')?.getBoundingClientRect().width || 280) + 22;
+
+        function updateArrowState() {
+          const maxScroll = certTrack.scrollWidth - certTrack.clientWidth;
+          if (certPrev) certPrev.disabled = certTrack.scrollLeft <= 4;
+          if (certNext) certNext.disabled = certTrack.scrollLeft >= maxScroll - 4;
+        }
+
+        certPrev?.addEventListener('click', () => certTrack.scrollBy({ left: -stepAmount(), behavior: 'smooth' }));
+        certNext?.addEventListener('click', () => certTrack.scrollBy({ left: stepAmount(), behavior: 'smooth' }));
+        certTrack.addEventListener('keydown', event => {
+          if (event.key === 'ArrowRight') { event.preventDefault(); certTrack.scrollBy({ left: stepAmount(), behavior: 'smooth' }); }
+          if (event.key === 'ArrowLeft') { event.preventDefault(); certTrack.scrollBy({ left: -stepAmount(), behavior: 'smooth' }); }
+        });
+        // Touch swiping and trackpad/wheel scrolling both work natively here,
+        // since this is a real horizontally-scrollable element — no extra JS needed.
+        certTrack.addEventListener('scroll', () => requestAnimationFrame(updateArrowState), { passive: true });
+        new ResizeObserver(updateArrowState).observe(certTrack);
+        updateArrowState();
+      }
+
+      // Clicking a certificate's image opens it larger in a lightbox.
+      const lightbox = document.getElementById('certLightbox');
+      const lightboxImage = document.getElementById('lightboxImage');
+      const lightboxClose = document.getElementById('lightboxClose');
+      let lastFocusedEl = null;
+
+      function openLightbox(img) {
+        lightboxImage.src = img.src;
+        lightboxImage.alt = img.alt || 'Certificate preview';
+        lastFocusedEl = document.activeElement;
+        lightbox.classList.add('open');
+        lightboxClose.focus();
+      }
+
+      function closeLightbox() {
+        lightbox.classList.remove('open');
+        lastFocusedEl?.focus();
+      }
+
+      document.querySelectorAll('.cert-visual').forEach(visual => {
+        const img = visual.querySelector('img');
+        if (!img) return;
+        visual.addEventListener('click', () => {
+          if (img.hidden) return; // no real image loaded (placeholder showing) — nothing to zoom
+          openLightbox(img);
+        });
+      });
+
+      lightboxClose.addEventListener('click', closeLightbox);
+      lightbox.addEventListener('click', event => {
+        if (event.target === lightbox) closeLightbox(); // click on the dark backdrop
+      });
+      document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && lightbox.classList.contains('open')) closeLightbox();
+      });
+    })();
   </script>
 </body>
 </html>
