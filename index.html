@@ -24,7 +24,7 @@
     .nav-cta:hover,.button:hover{transform:translateY(-2px);background:var(--accent);color:#04100c!important;box-shadow:0 0 30px rgba(88,247,195,.25)}
     .menu{display:none;background:none;border:0;color:white;font-size:1.6rem}
     .hero{min-height:calc(100vh - 76px);display:grid;grid-template-columns:1.15fr .85fr;gap:72px;align-items:center;padding:86px 0 78px}
-    .eyebrow{display:flex;align-items:center;gap:10px;color:#b6c5c4;font-weight:600;letter-spacing:.08em;text-transform:uppercase;font-size:.78rem}.eyebrow:before{content:"";width:36px;height:1px;background:var(--accent);box-shadow:0 0 10px var(--accent)}
+   
     h1,h2,h3{font-family:Manrope,sans-serif;margin:0;line-height:1.05}h1{font-size:clamp(3.2rem,7vw,6.6rem);letter-spacing:-.065em;margin:20px 0 24px;max-width:820px}h1 .name{display:block}h1 .role-line{display:block;font-size:.48em;letter-spacing:-.04em;margin-top:15px;color:#c8d4d3;min-height:1.25em}.typed{color:var(--accent);text-shadow:0 0 22px rgba(88,247,195,.28)}.caret{display:inline-block;width:3px;height:.9em;background:var(--accent);margin-left:5px;vertical-align:-.08em;animation:blink .7s step-end infinite;box-shadow:0 0 10px var(--accent)}
     @keyframes blink{50%{opacity:0}}.hero-copy>p{max-width:660px;color:var(--muted);font-size:1.08rem}.hero-actions{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap}.button.primary{background:var(--accent);color:#04100c!important;box-shadow:0 0 32px rgba(88,247,195,.2)}.button.secondary{border-color:var(--line);background:transparent;color:var(--ink)!important}.button.secondary:hover{border-color:var(--accent);color:var(--accent)!important}
     .proof{margin-top:45px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}.proof div{min-width:0;border-left:1px solid var(--line);padding-left:16px}.proof strong{display:block;font-family:Manrope;font-size:clamp(.92rem,1.6vw,1.2rem);white-space:nowrap}.proof span{display:block;color:var(--muted);font-size:clamp(.7rem,1.15vw,.84rem);line-height:1.45}
@@ -218,7 +218,7 @@
   <main>
     <section class="hero wrap" id="home">
       <div class="hero-copy">
-        <div class="eyebrow">Shopify & e-commerce portfolio</div>
+        
         <h1><span class="name">Hi, I’m Ronel.</span><span class="role-line">I’m a <span class="typed" aria-live="polite">Shopify Specialist</span><span class="caret" aria-hidden="true"></span></span></h1>
         <p>I help e-commerce teams turn product data and storefront ideas into organized, customer-ready shopping experiences—from precise listings and Liquid customization to inventory workflows and day-to-day store operations.</p>
         <div class="hero-actions"><a class="button primary" href="#projects">Explore my work ↓</a><a class="button secondary" href="#services">See how I can help</a><a class="button secondary" href="assets/ronel-montero-cv.pdf" download="Ronel-Montero-CV.pdf">Download CV ↓</a></div>
@@ -268,14 +268,14 @@
     </section>
 
     <section class="wrap reveal" id="projects">
-      <div class="section-head"><div><div class="eyebrow">Selected work</div><h2>Proof through projects.</h2></div><p>I build product experiences that are clearer to shop, easier to manage, and designed to move customers confidently toward purchase.</p></div>
+      <div class="section-head"><div><h2>Proof through projects.</h2></div><p>I build product experiences that are clearer to shop, easier to manage, and designed to move customers confidently toward purchase.</p></div>
 
       <div class="coverflow-wrap">
         <button class="carousel-button coverflow-arrow coverflow-prev" id="projectPrev" type="button" aria-label="Previous project">‹</button>
         <div class="coverflow-viewport" id="projectViewport" tabindex="0" aria-label="Portfolio projects, use arrow keys to browse">
           <div class="coverflow-track" id="projectTrack">
 
-        <!--<article
+        <article
             class="project"
             data-project-url="https://next-tech-hub-2.myshopify.com"
             style="--tint:rgba(88,247,195,.18)"
@@ -307,7 +307,7 @@
                 View live storefront <span>↗</span>
               </span>
             </div>
-          </article>-->
+          </article>
 
           <article
             class="project"
@@ -416,7 +416,7 @@
       <div class="coverflow-dots" id="projectDots" aria-label="Select project"></div>
     </section>
 
-    <section class="services reveal" id="services"><div class="wrap"><div class="section-head"><div><div class="eyebrow">What I do</div><h2>Useful from day one.</h2></div><p>Practical Shopify support across the customer-facing store and the operational systems behind it.</p></div><div class="service-list">
+    <section class="services reveal" id="services"><div class="wrap"><div class="section-head"><div><h2>Useful from day one.</h2></div><p>Practical Shopify support across the customer-facing store and the operational systems behind it.</p></div><div class="service-list">
       <article class="service">
         <div class="service-top">
           <span class="service-icon" aria-hidden="true">
@@ -519,7 +519,7 @@
       <article class="service"><div class="service-top"><span class="service-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/><path d="m5.6 5.6 2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8"/><circle cx="12" cy="12" r="4"/></svg></span><span class="service-index">06</span></div><h3>AI content & workflow automation</h3><p>AI-supported content and automations that reduce repetitive work while keeping accuracy and human review in the process.</p><div class="service-tools"><span>Prompting</span><span>Content</span><span>Automation</span><span>Review systems</span></div></article>
     </div></div></section>
 
-    <section class="certificates reveal" id="certificates"><div class="wrap"><div class="section-head"><div><div class="eyebrow">Credentials</div><h2>Certified & continuously learning.</h2></div><p>Formal training and completed coursework that back up the practical Shopify and e-commerce work above.</p></div>
+    <section class="certificates reveal" id="certificates"><div class="wrap"><div class="section-head"><div><h2>Certified & continuously learning.</h2></div><p>Formal training and completed coursework that back up the practical Shopify and e-commerce work above.</p></div>
 
       <div class="cert-carousel">
         <button class="carousel-button cert-prev" id="certPrev" type="button" aria-label="Previous certificate">‹</button>
@@ -554,7 +554,7 @@
     <section class="wrap reveal" id="contact">
       <div class="contact-card">
         <div class="contact-intro">
-          <div class="eyebrow" style="justify-content:center">Ready when you are</div>
+          
           <h2>Need someone who can <span>own the details?</span></h2>
           <p>Tell me what’s holding your store back.
 Whether it’s poor product discovery, low-converting pages, or a storefront that needs a stronger buying journey — tell me what’s happening, and let’s fix it.</p>
