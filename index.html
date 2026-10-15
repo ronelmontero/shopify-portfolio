@@ -639,7 +639,7 @@ Whether it’s poor product discovery, low-converting pages, or a storefront tha
 
 
   <script>
-    const roles=["Shopify Specialist","Product Listing Specialist","Shopify Landing Page Developer","E-commerce Operations Specialist","AI Workflow Specialist"];
+    const roles=["Shopify Specialist","Product Listing Specialist","Shopify Front-End Developer","E-commerce Operations Specialist","AI Workflow Specialist"];
     const typed=document.querySelector('.typed');let role=0,index=roles[0].length,deleting=true;
     function typeLoop(){const word=roles[role];typed.textContent=word.slice(0,index);let delay=deleting?42:72;if(!deleting&&index===word.length){deleting=true;delay=1550}else if(deleting&&index===0){deleting=false;role=(role+1)%roles.length;delay=360}else{index+=deleting?-1:1}setTimeout(typeLoop,delay)}
     setTimeout(typeLoop,1400);
